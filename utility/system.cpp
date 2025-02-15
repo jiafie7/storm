@@ -1,6 +1,21 @@
 #include "utility/system.h"
 using namespace storm::utility;
 
+void System::init()
+{
+  coreDump();
+  m_root_path = getRootPath();
+
+  const std::string& dir = m_root_path + "/log";
+  DIR* dp = opendir(dir.c_str());
+
+  // if log isn't exist, create
+  if (dp == nullptr) 
+    ::mkdir(dir.c_str(), 0755); 
+  else
+    ::closedir(dp);
+}
+
 std::string System::getRootPath()
 {
   if (!m_root_path.empty())
@@ -30,4 +45,12 @@ std::string System::getRootPath()
     }
 
   return path;
+}
+
+void System::coreDump()
+{
+  struct rlimit x;
+  x.rlim_cur = RLIM_INFINITY;
+  x.rlim_max = RLIM_INFINITY;
+  setrlimit(RLIMIT_CORE, &x);
 }
