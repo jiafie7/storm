@@ -1,6 +1,8 @@
 #include "task/echo_task.h"
-
 using namespace storm::task;
+
+#include "socket/socket_handler.h"
+using namespace storm::socket;
 
 EchoTask::EchoTask(int socket_fd)
   : m_socket_fd(socket_fd)
@@ -8,10 +10,9 @@ EchoTask::EchoTask(int socket_fd)
 
 EchoTask::~EchoTask()
 {
-  destroy();
 }
 
-bool EchoTask::run()
+void EchoTask::run()
 {
   log_debug("echo task run.");
 
@@ -25,23 +26,25 @@ bool EchoTask::run()
     if (errno == EAGAIN || errno == EWOULDBLOCK)
     {
       log_debug("socket recv would block: conn = %d, errno = %d, errmsg = %s.", m_socket_fd, errno, strerror(errno));
-      return true;
+      return;
     }
     else if (errno == EINTR)
     {
       log_debug("socket recv interrupted: conn = %d, errno = %d, errmsg = %s.", m_socket_fd, errno, strerror(errno));
-      return true;
+      return;
     }
     else
     {
       log_error("socket connection abort: conn = %d, errno = %d, errmsg = %s.", m_socket_fd, errno, strerror(errno));
-      return false;
+      m_closed = true;
+      return;
     }
   }
   else if (len == 0)
   {
     log_error("socket closed by peer: conn = %d, errno = %d, errmsg = %s.", m_socket_fd, errno, strerror(errno));
-    return false;
+    m_closed = true;
+    return;
   }
   else
   {
@@ -49,13 +52,16 @@ bool EchoTask::run()
 
     std::string msg = "hi, I am server!";
     client.send(msg.c_str(), msg.size());
-
-    return true;
   }
 }
 
 void EchoTask::destroy()
 {
   log_debug("echo task destroy.");
+  if (m_closed)
+    ::close(m_socket_fd);
+  else
+    Singleton<SocketHandler>::getInstance()->attach(m_socket_fd);
+  delete this;
 }
 

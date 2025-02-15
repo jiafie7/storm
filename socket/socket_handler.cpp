@@ -1,8 +1,11 @@
 #include "socket/socket_handler.h"
-#include "task/echo_task.h"
-
 using namespace storm::socket;
+
+#include "task/echo_task.h"
 using namespace storm::task;
+
+#include "thread/task_dispatcher.h"
+using namespace storm::thread;
 
 void SocketHandler::listen(const std::string& ip, int port)
 {
@@ -74,11 +77,8 @@ void SocketHandler::handle(int max_conn, int timeout)
         {
           detach(fd);
 
-          EchoTask task(fd);
-          if (!task.run())
-            ::close(fd);
-          else
-            attach(fd);
+          auto task = new EchoTask(fd);
+          Singleton<TaskDispatcher>::getInstance()->push(task);
         }
       }
     }
