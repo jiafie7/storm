@@ -48,7 +48,7 @@ void LogSystem::close()
   m_fout.close();
 }
 
-void LogSystem::setLevel(LogLevel level)
+void LogSystem::setLevel(int level)
 {
   m_log_level = level;
 }

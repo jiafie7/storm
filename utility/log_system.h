@@ -51,7 +51,7 @@ namespace storm
         void open(const std::string& filename);
         void close();
         
-        void setLevel(LogLevel level);
+        void setLevel(int level);
         void setMaxSize(int size);
         void setConsole(bool console);
         void log(LogLevel level, const char* filename, int line, const char* format, ...);
