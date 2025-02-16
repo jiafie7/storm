@@ -8,6 +8,15 @@ namespace storm
 {
   namespace task
   {
+    // message head, 4 bytes
+    struct MsgHead
+    {
+      uint16_t cmd;  // work id
+      uint16_t len;  // length of message body
+    };
+
+    const uint32_t recv_buf_size = 1024;
+
     class WorkTask : public Task
     {
     public:

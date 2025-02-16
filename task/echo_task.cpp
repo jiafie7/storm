@@ -42,7 +42,7 @@ void EchoTask::run()
   }
   else if (len == 0)
   {
-    log_error("socket closed by peer: conn = %d, errno = %d, errmsg = %s.", m_socket_fd, errno, strerror(errno));
+    log_debug("socket closed by peer: conn = %d.", m_socket_fd);
     m_closed = true;
     return;
   }

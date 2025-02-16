@@ -22,9 +22,10 @@ void WorkTask::run()
   log_debug("work task run.");
 
   Socket client(m_socket_fd);
-
-  char buf[1024] = {0};
-  int len = client.recv(buf, sizeof(buf));
+  
+  struct MsgHead msg_head;
+  std::memset(&msg_head, 0, sizeof(msg_head));
+  int len = client.recv((char*)&msg_head, sizeof(msg_head));
 
   if (len < 0)
   {
@@ -47,18 +48,45 @@ void WorkTask::run()
   }
   else if (len == 0)
   {
-    log_error("socket closed by peer: conn = %d, errno = %d, errmsg = %s.", m_socket_fd, errno, strerror(errno));
+    log_debug("socket closed by peer: conn = %d.", m_socket_fd);
     m_closed = true;
     return;
   }
   else
   {
-    log_debug("recv: conn = %d, msg = %s.", m_socket_fd, buf);
+    // recv message head
+    if (len != sizeof(msg_head))
+    {
+      log_error("msg head length error: %d.", len);
+      m_closed = true;
+      return;
+    }
+    log_debug("msg head: cmd = %d, len = %d.", msg_head.cmd, msg_head.len);
+
+    if (msg_head.len > (uint16_t)recv_buf_size)
+    {
+      log_error("msg body too large: len = %d.", msg_head.len);
+      m_closed = true;
+      return;
+    }
+
+    // recv message body
+    char buf[recv_buf_size] = {0};
+    len = client.recv(buf, msg_head.len);
+    if (len != msg_head.len)
+    {
+      log_error("msg body length error: %d.", len);
+      m_closed = true;
+      return;
+    }
+    log_debug("msg body: conn = %d, len = %d, data = %s.", m_socket_fd, len, buf);
+
+    int work_id = (int)msg_head.cmd;
 
     std::string output;
     // run workflow
     auto workflow = Singleton<Workflow>::getInstance();
-    workflow->run(1, buf, output);
+    workflow->run(work_id, buf, output);
 
     client.send(output.c_str(), output.size());
     
