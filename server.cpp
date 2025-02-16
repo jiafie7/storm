@@ -1,18 +1,21 @@
 #include "frame/server.h"
 using namespace storm::frame;
 
-#include "engine/plugin_helper.h"
+#include "engine/context.h"
 using namespace storm::engine;
 
 int main()
 {
   // Singleton<Server>::getInstance()->start();
 
-  PluginHelper* helper = Singleton<PluginHelper>::getInstance();
-  helper->load("echo_plugin.so");
-  void *func = helper->symbol("echo_plugin.so", "create");
+  Context ctx;
+  ctx.set("name", "jack");
+  ctx.set("age", 23);
 
-  helper->show();
+  std::string name = ctx.get<std::string>("name");
+  int age = ctx.get<int>("age");
+
+  std::cout << "name = " << name << ", age = " << age << '\n';
 
   return 0;
 }
