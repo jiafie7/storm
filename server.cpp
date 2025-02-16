@@ -1,6 +1,7 @@
 #include "frame/server.h"
 using namespace storm::frame;
 
+#include "engine/workflow.h"
 #include "engine/context.h"
 using namespace storm::engine;
 
@@ -8,14 +9,15 @@ int main()
 {
   // Singleton<Server>::getInstance()->start();
 
-  Context ctx;
-  ctx.set("name", "jack");
-  ctx.set("age", 23);
+  Workflow* workflow = Singleton<Workflow>::getInstance();
+  workflow->load("./../config/workflow.xml");
 
-  std::string name = ctx.get<std::string>("name");
-  int age = ctx.get<int>("age");
+  const std::string& input = "request data";
+  std::string output;
 
-  std::cout << "name = " << name << ", age = " << age << '\n';
+  workflow->run(1, input, output);
+
+  std::cout << output << '\n';
 
   return 0;
 }

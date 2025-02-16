@@ -69,12 +69,17 @@ bool Workflow::run(int id, const std::string& input, std::string& output)
     log_error("work switch off: work id = %d.", id);
     return false;
   }
-  
-  if (!it->second->run())
+   
+  Context ctx;
+  ctx.set("input", input);
+ 
+  if (!it->second->run(ctx))
   {
     log_error("work run error: work id = %d.", id);
     return false;
   }
+  
+  output = ctx.get<std::string>("output");
 
   return true;
 }

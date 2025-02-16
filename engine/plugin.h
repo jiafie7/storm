@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "engine/context.h"
 
 namespace storm
 {
@@ -35,7 +36,7 @@ namespace storm
         return m_switch;
       }
 
-      virtual bool run() = 0;
+      virtual bool run(Context& ctx) = 0;
     
     protected:
       std::string   m_name;     // plugin name

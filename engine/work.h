@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "engine/context.h"
 #include "engine/plugin_helper.h"
 
 namespace storm
@@ -23,7 +24,7 @@ namespace storm
       void append(Plugin* plugin);
 
       // run plugins in work sequentially
-      bool run();
+      bool run(Context& ctx);
         
     private:
       int m_id;

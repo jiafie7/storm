@@ -13,7 +13,7 @@ namespace storm
       EchoPlugin();
       virtual ~EchoPlugin();
 
-      virtual bool run();
+      virtual bool run(Context& ctx);
     };
 
     DEFINE_PLUGIN(EchoPlugin)

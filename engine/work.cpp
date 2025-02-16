@@ -29,12 +29,12 @@ void Work::append(Plugin* plugin)
   m_plugins.push_back(plugin);
 }
       
-bool Work::run()
+bool Work::run(Context& ctx)
 {
   for (auto it = m_plugins.begin(); it != m_plugins.end(); ++ it)
   {
     if ((*it)->getSwitch())
-      if (!(*it)->run())
+      if (!(*it)->run(ctx))
         break;
   }
 

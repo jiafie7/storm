@@ -6,6 +6,7 @@ using namespace storm::plugin;
 using namespace storm::utility;
 
 EchoPlugin::EchoPlugin()
+  :  Plugin()
 {
   System* sys = Singleton<System>::getInstance();
   const std::string& root_path = sys->getRootPath();
@@ -19,9 +20,13 @@ EchoPlugin::~EchoPlugin()
 {
 }
 
-bool EchoPlugin::run()
+bool EchoPlugin::run(Context& ctx)
 {
+  std::string input = ctx.get<std::string>("input");
+
   log_info("echo plugin run!");
-  
+  log_info("context input: %s", input.c_str());
+
+  ctx.set("output", "echo plugin output: " + input);
   return true;
 }
