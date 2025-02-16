@@ -7,6 +7,9 @@ using namespace storm::thread;
 #include <socket/socket_handler.h>
 using namespace storm::socket;
 
+#include "engine/workflow.h"
+using namespace storm::engine;
+
 void Server::start()
 {
   System* sys = Singleton<System>::getInstance();
@@ -27,6 +30,10 @@ void Server::start()
   log_system->open(root_path + "/log/server.log");
   log_system->setLevel(m_log_level);
   log_system->setConsole(false);
+  
+  // load workflow config
+  Workflow* workflow = Singleton<Workflow>::getInstance();
+  workflow->load(root_path + "/config/workflow.xml");
 
   TaskDispatcher* dispatcher = Singleton<TaskDispatcher>::getInstance();
   dispatcher->init(m_threads);

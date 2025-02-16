@@ -1,7 +1,8 @@
 #include "socket/socket_handler.h"
 using namespace storm::socket;
 
-#include "task/echo_task.h"
+// #include "task/echo_task.h"
+#include "task/task_factory.h"
 using namespace storm::task;
 
 #include "thread/task_dispatcher.h"
@@ -77,7 +78,8 @@ void SocketHandler::handle(int max_conn, int timeout)
         {
           detach(fd);
 
-          auto task = new EchoTask(fd);
+          // auto task = new EchoTask(fd);
+          auto task = TaskFactory::create(fd);
           Singleton<TaskDispatcher>::getInstance()->push(task);
         }
       }

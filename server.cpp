@@ -7,17 +7,7 @@ using namespace storm::engine;
 
 int main()
 {
-  // Singleton<Server>::getInstance()->start();
-
-  Workflow* workflow = Singleton<Workflow>::getInstance();
-  workflow->load("./../config/workflow.xml");
-
-  const std::string& input = "request data";
-  std::string output;
-
-  workflow->run(1, input, output);
-
-  std::cout << output << '\n';
-
+  Singleton<Server>::getInstance()->start();
+ 
   return 0;
 }
