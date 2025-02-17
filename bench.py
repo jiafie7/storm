@@ -101,7 +101,7 @@ def stat(log_file):
         else:
             break
     print(
-        f"连接耗时={round(total_conn_time / total, 3)}ms, 请求耗时={round(total_req_time / total, 3)}ms, 总共耗时={round(total_time / total, 3)}ms"
+        f"Connection time={round(total_conn_time / total, 3)}ms, Request time={round(total_req_time / total, 3)}ms, Total time={round(total_time / total, 3)}ms"
     )
 
 
